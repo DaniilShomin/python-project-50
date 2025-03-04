@@ -1,5 +1,5 @@
-import json
 import copy
+import json
 
 
 def generate_key(key, pref):
@@ -24,7 +24,9 @@ def generate_diff(filepath1, filepath2):
     if len(copy_file2) > 0:
         for key in copy_file2.keys():
             new_file[generate_key(key, '+')] = copy_file2[key]
-    sorted_new_file = dict(sorted(new_file.items(), key=lambda item: item[0][2:]))
+    sorted_new_file = dict(
+        sorted(new_file.items(), key=lambda item: item[0][2:])
+    )
 
     result_str = '{\n'
     for k, v in sorted_new_file.items():

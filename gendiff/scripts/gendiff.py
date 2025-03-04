@@ -1,4 +1,5 @@
 import argparse
+
 from gendiff.modules import generate_diff
 
 
@@ -17,8 +18,6 @@ def main():
     filepath2 = 'data/' + files.second_file
     diff = generate_diff(filepath1, filepath2)
     print(diff)
-
-
 
 
 if __name__ == '__main__':
