@@ -28,7 +28,7 @@ def generate_diff(filepath1, filepath2):
 
     result_str = '{\n'
     for k, v in sorted_new_file.items():
-        result_str += f'  {k} : {v}\n'
+        result_str += f'  {k}: {str(v).lower()}\n'
     result_str += '}'
     return result_str
 
