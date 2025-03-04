@@ -20,3 +20,5 @@ test-coverage:
 
 run:
 	uv run gendiff
+
+.PHONY: install test lint selfcheck check build
