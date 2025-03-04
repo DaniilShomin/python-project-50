@@ -9,3 +9,14 @@ package-install:
 
 make lint:
 	uv run ruff check gendiff
+
+test:
+	uv run pytest
+
+check: test lint
+
+test-coverage:
+	uv run pytest --cov=hexlet_python_package --cov-report xml
+
+run:
+	uv run gendiff
