@@ -5,3 +5,5 @@
 [![Python CI](https://github.com/DaniilShomin/python-project-50/actions/workflows/puci.yml/badge.svg)](https://github.com/DaniilShomin/python-project-50/actions/workflows/puci.yml)
 
 [![asciicast](https://asciinema.org/a/NPp4thC9PNyTrNZ1ai5XFLbN4.svg)](https://asciinema.org/a/NPp4thC9PNyTrNZ1ai5XFLbN4)
+
+[![asciicast](https://asciinema.org/a/kj58I9QUH0F3XrPOTrLka3TO0.svg)](https://asciinema.org/a/kj58I9QUH0F3XrPOTrLka3TO0)
