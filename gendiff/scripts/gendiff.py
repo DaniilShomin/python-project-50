@@ -16,7 +16,8 @@ def main():
     files = get_file_paths()
     filepath1 = files.first_file
     filepath2 = files.second_file
-    diff = generate_diff(filepath1, filepath2)
+    format = files.format
+    diff = generate_diff(filepath1, filepath2, format)
     print(diff)
 
 

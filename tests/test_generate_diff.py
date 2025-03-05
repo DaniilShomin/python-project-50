@@ -11,3 +11,4 @@ def test_generate_diff():
   + verbose: true
 }'''
     assert generate_diff('data/file1.json', 'data/file2.json') == result
+    assert generate_diff('data/file1.yaml', 'data/file2.yaml', 'yaml') == result

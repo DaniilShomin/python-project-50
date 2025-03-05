@@ -1,6 +1,9 @@
 import copy
 import json
 
+import yaml
+from yaml.loader import SafeLoader
+
 
 def generate_key(key, pref):
     return f'{pref} {key}'
@@ -25,9 +28,13 @@ def get_generated_diff(file1, file2):
     return new_file
 
 
-def generate_diff(filepath1, filepath2):
-    file1 = json.load(open(filepath1))
-    file2 = json.load(open(filepath2))
+def generate_diff(filepath1, filepath2, format=None):
+    if format is None or format == 'json':
+        file1 = json.load(open(filepath1))
+        file2 = json.load(open(filepath2))
+    elif format == 'yaml' or format == 'yml':
+        file1 = yaml.load(open(filepath1), Loader=SafeLoader)
+        file2 = yaml.load(open(filepath2), Loader=SafeLoader)
     diff_file = get_generated_diff(file1, file2)
     sorted_diff_file = dict(
         sorted(diff_file.items(), key=lambda item: item[0][2:])
