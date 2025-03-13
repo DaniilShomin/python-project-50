@@ -13,10 +13,10 @@ def get_file_paths():
 
 
 def main():
-    files = get_file_paths()
-    filepath1 = files.first_file
-    filepath2 = files.second_file
-    format = files.format
+    args = get_file_paths()
+    filepath1 = args.first_file
+    filepath2 = args.second_file
+    format = args.format
     diff = generate_diff(filepath1, filepath2, format)
     print(diff)
 
