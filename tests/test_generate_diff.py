@@ -12,3 +12,18 @@ def test_generate_diff():
         result = f.read()
     assert generate_diff('data/file3.json', 'data/file4.json') == result
     assert generate_diff('data/file3.yaml', 'data/file4.yaml') == result
+
+
+def test_generate_diff_plain():
+    with open('tests/test_data/nested_plain_result.txt') as f:
+        result = f.read()
+    assert generate_diff(
+        'data/file3.json', 
+        'data/file4.json', 
+        'plain'
+        ) == result
+    assert generate_diff(
+        'data/file3.yaml', 
+        'data/file4.yaml', 
+        'plain'
+        ) == result
