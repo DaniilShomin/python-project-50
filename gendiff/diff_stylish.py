@@ -34,10 +34,16 @@ def get_generated_diff(data, data2, count=1):  # noqa: C901
                             lines.append(f'{indent}{prefix[0]}{key}: '
                                          f'{json.dumps(current_value2.pop(key))}')
                         else:
-                            lines.append(f'{indent}{prefix[1]}{key}: '
-                                         f'{json.dumps(current_value[key])}')
-                            lines.append(f'{indent}{prefix[2]}{key}: '
-                                         f'{json.dumps(current_value2.pop(key))}')
+                            if not isinstance(current_value2[key], dict):
+                                lines.append(f'{indent}{prefix[1]}{key}: '
+                                            f'{json.dumps(current_value[key])}')
+                                lines.append(f'{indent}{prefix[2]}{key}: '
+                                            f'{json.dumps(current_value2.pop(key))}')
+                            else:
+                                lines.append(f'{indent}{prefix[1]}{key}: '
+                                            f'{json.dumps(current_value[key])}')
+                                lines.append(f'{indent}{prefix[2]}{key}: '
+                                            f'{iter(current_value2.pop(key), {}, deep_indent)}')
                     else:
                         lines.append(
                             f'{indent}{prefix[1]}{key}: '
