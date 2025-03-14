@@ -16,8 +16,8 @@ def generate_diff(filepath1, filepath2, format_name='stylish'):
         diff_file = get_generated_diff(file1, file2)
     elif format_name == 'plain':
         diff_file = get_generated_diff_plain(file1, file2)
-        diff_file = diff_file.replace("'False'", 'false')
-        diff_file = diff_file.replace("'True'", 'true')
+        diff_file = diff_file.replace('False', 'false')
+        diff_file = diff_file.replace('True', 'true')
         diff_file = diff_file.replace("'None'", 'null')
     elif format_name == 'json':
         diff_file = get_generated_diff_json(file1, file2)

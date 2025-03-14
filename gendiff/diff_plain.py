@@ -12,11 +12,24 @@ def get_generated_diff_plain(data, data2):  # noqa: C901
                 if pre_key:
                     if current_value2.get(key, 'not_key') != 'not_key':
                         if current_value[key] != current_value2[key]:
-                            lines.append(
-                                f"{pre_key}.{key}' was updated. From "
-                                f"'{current_value[key]}' to "
-                                f"'{current_value2.pop(key)}'"
-                                )
+                            if not isinstance(current_value2[key], dict):
+                                lines.append(
+                                    f"{pre_key}.{key}' was updated. From "
+                                    f'{current_value[key] 
+                                       if isinstance(current_value[key], int) 
+                                       else f"\'{current_value[key]}\'"} to '
+                                    f'{current_value2[key]
+                                       if isinstance(current_value2[key], int) 
+                                       else f"\'{current_value2[key]}\'"}'
+                                    )
+                                current_value2.pop(key)
+                            else:
+                                lines.append(
+                                    f"{pre_key}.{key}' was updated. From "
+                                    f"'{current_value[key]}' to "
+                                    f"[complex value]"
+                                    )
+                                current_value2.pop(key)
                         else:
                             current_value2.pop(key)
                     else:
@@ -26,9 +39,14 @@ def get_generated_diff_plain(data, data2):  # noqa: C901
                         if current_value[key] != current_value2[key]:
                             lines.append(
                                 f"Property '{key}' was updated. From "
-                                f"'{current_value[key]}' to "
-                                f"'{current_value2.pop(key)}'"
+                                f'{current_value[key] 
+                                    if isinstance(current_value[key], int) 
+                                    else f"\'{current_value[key]}\'"} to '
+                                f'{current_value2[key]
+                                    if isinstance(current_value2[key], int) 
+                                    else f"\'{current_value2[key]}\'"}'
                                 )
+                            current_value2.pop(key)
                         else:
                             current_value2.pop(key) 
                     else:
@@ -44,8 +62,11 @@ def get_generated_diff_plain(data, data2):  # noqa: C901
                             lines.append(
                                 f"{pre_key}.{key}' was updated. "
                                 f"From [complex value] to "
-                                f"'{current_value2.pop(key)}'"
+                                f'{current_value2[key]
+                                if isinstance(current_value2[key], int) 
+                                else f"\'{current_value2[key]}\'"}'
                                 )
+                            current_value2.pop(key)
                     else:
                         lines.append(f"{pre_key}.{key}' was removed")
                 else:
@@ -65,12 +86,18 @@ def get_generated_diff_plain(data, data2):  # noqa: C901
                             if pre_key:
                                 lines.append(
                                     f"{pre_key}.{key}' was added "
-                                    f"with value: '{current_value2[key]}'"
+                                    f"with value: "
+                                    f'{current_value2[key]
+                                    if isinstance(current_value2[key], int) 
+                                    else f"\'{current_value2[key]}\'"}'
                                     )
                             else:
                                 lines.append(
                                     f"Property '{key}' was added "
-                                    f"with value: '{current_value2[key]}'"
+                                    f"with value: "
+                                    f'{current_value2[key]
+                                    if isinstance(current_value2[key], int) 
+                                    else f"\'{current_value2[key]}\'"}'
                                     )
                         else:
                             if pre_key:
