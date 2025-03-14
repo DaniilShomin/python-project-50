@@ -27,3 +27,19 @@ def test_generate_diff_plain():
         'data/file4.yaml', 
         'plain'
         ) == result
+
+
+def test_generate_diff_json():
+    with open('tests/test_data/json_result.txt') as f:
+        result = f.read()
+    assert generate_diff(
+        'data/file3.json', 
+        'data/file4.json', 
+        'json'
+        ) == result
+    assert generate_diff(
+        'data/file3.yaml', 
+        'data/file4.yaml', 
+        'json'
+        ) == result
+    
