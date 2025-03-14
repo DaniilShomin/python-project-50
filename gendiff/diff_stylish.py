@@ -29,38 +29,22 @@ def get_generated_diff(data, data2, count=1):  # noqa: C901
         else:
             for key, val in current_value.items():            
                 if not isinstance(val, dict):
-                    if current_value2.get(key):
+                    if current_value2.get(key, 'not_key') != 'not_key':
                         if current_value[key] == current_value2[key]:
                             lines.append(f'{indent}{prefix[0]}{key}: '
                                          f'{json.dumps(current_value2.pop(key))}')
                         else:
-                            if current_value[key] and current_value2[key]:
-                                lines.append(f'{indent}{prefix[1]}{key}: '
-                                             f'{json.dumps(current_value[key])}')
-                                lines.append(f'{indent}{prefix[2]}{key}: '
-                                             f'{json.dumps(current_value2.pop(key))}')
-                            elif not current_value[key] and current_value2[key]:
-                                lines.append(f'{indent}{prefix[1]}{key}:'
-                                             f'{json.dumps(current_value[key])}')
-                                lines.append(f'{indent}{prefix[2]}{key}: '
-                                             f'{json.dumps(current_value2.pop(key))}')
-                            elif current_value[key] and not current_value2[key]:
-                                lines.append(f'{indent}{prefix[1]}{key}: '
-                                             f'{json.dumps(current_value[key])}')
-                                lines.append(f'{indent}{prefix[2]}{key}:'
-                                             f'{json.dumps(current_value2.pop(key))}')
-                            else:
-                                lines.append(f'{indent}{prefix[1]}{key}:'
-                                             f'{json.dumps(current_value[key])}')
-                                lines.append(f'{indent}{prefix[2]}{key}:'
-                                             f'{json.dumps(current_value2.pop(key))}')
+                            lines.append(f'{indent}{prefix[1]}{key}: '
+                                         f'{json.dumps(current_value[key])}')
+                            lines.append(f'{indent}{prefix[2]}{key}: '
+                                         f'{json.dumps(current_value2.pop(key))}')
                     else:
                         lines.append(
                             f'{indent}{prefix[1]}{key}: '
                             f'{json.dumps(current_value[key])}'
                             )                                                      
                 else:
-                    if (current_value2.get(key) and 
+                    if (current_value2.get(key, 'not_key') != 'not_key' and 
                         not isinstance(current_value2.get(key), str)):
                         lines.append(
                             f'{indent}{prefix[0]}{key}: '
@@ -68,7 +52,7 @@ def get_generated_diff(data, data2, count=1):  # noqa: C901
                                     current_value2.pop(key), 
                                     deep_indent)}'
                             )
-                    elif (current_value2.get(key) and 
+                    elif (current_value2.get(key, 'not_key') != 'not_key' and 
                           isinstance(current_value2.get(key), str)):
                         lines.append(
                             f'{indent}{prefix[1]}{key}: '
