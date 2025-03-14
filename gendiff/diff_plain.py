@@ -26,8 +26,10 @@ def get_generated_diff_plain(data, data2):  # noqa: C901
                             else:
                                 lines.append(
                                     f"{pre_key}.{key}' was updated. From "
-                                    f"'{current_value[key]}' to "
-                                    f"[complex value]"
+                                    f'{current_value[key] 
+                                       if isinstance(current_value[key], int) 
+                                       else f"\'{current_value[key]}\'"}'
+                                    f" to [complex value]"
                                     )
                                 current_value2.pop(key)
                         else:
