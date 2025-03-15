@@ -1,6 +1,7 @@
 {
   "common": {
     "follow": false,
+    "setting1": "Value 1",
     "setting3": null,
     "setting4": "blah blah",
     "setting5": {
@@ -10,11 +11,13 @@
       "doge": {
         "wow": "so much"
       },
+      "key": "value",
       "ops": "vops"
     }
   },
   "group1": {
     "baz": "bars",
+    "foo": "bar",
     "nest": "str"
   },
   "group3": {
