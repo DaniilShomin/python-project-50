@@ -12,11 +12,18 @@ def get_generated_diff_json(data1, data2):  # noqa: C901
                 if current_value2.get(key, 'not_key') != 'not_key':
                     if current_value[key] == current_value2[key]:
                         result[key] = current_value2.pop(key)
+                    else:
+                        result[key] = current_value[key]
+                else:
+                    result[key] = current_value[key]
             else:
                 if current_value2.get(key, 'not_key') != 'not_key':
                     if not isinstance(current_value2[key], str):
                         result[key] = iter(current_value[key], 
                                            current_value2.pop(key))
+                else:
+                    result[key] = iter(current_value[key], 
+                                           {})
             if list(current_value)[-1] == key:
                 if len(current_value2) > 0:
                     for key, val in current_value2.items():
