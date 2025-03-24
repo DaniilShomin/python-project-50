@@ -1,118 +1,98 @@
-import copy
 import itertools
+import json
 
 
-def get_generated_diff_plain(data, data2):  # noqa: C901
-    copy_file2 = copy.deepcopy(data2)
+def is_key(d, key):
+    for k in d.keys():
+        if k == key:
+            return True
+    return False
 
-    def iter(current_value, current_value2, pre_key=''):  # noqa: C901
+
+def plain(value):  # noqa: C901
+
+    def iter_(current_value, pre_key=''):  # noqa: C901
+        if not isinstance(current_value, dict):
+            return json.dumps(current_value)
+
         lines = []
-        for key, val in current_value.items():            
+        for key, val in current_value.items():
             if not isinstance(val, dict):                              
                 if pre_key:
-                    if current_value2.get(key, 'not_key') != 'not_key':
-                        if current_value[key] != current_value2[key]:
-                            if not isinstance(current_value2[key], dict):
+                    if key[0] == '-':
+                        if is_key(current_value, '+' + key[1:]):
+                            lines.append(
+                                f"{pre_key}.{key[2:]}' was updated. "
+                                f"From {iter_(val)} to "
+                                f"{iter_(current_value['+' + key[1:]])}")
+                        else:
+                            lines.append(f"{pre_key}.{key[2:]}' was removed")
+                    elif key[0] == '+':
+                        if not is_key(current_value, '-' + key[1:]):
+                            if isinstance(val, dict):
                                 lines.append(
-                                    f"{pre_key}.{key}' was updated. From "
-                                    f'{current_value[key] 
-                                       if isinstance(current_value[key], int) 
-                                       else f"\'{current_value[key]}\'"} to '
-                                    f'{current_value2[key]
-                                       if isinstance(current_value2[key], int) 
-                                       else f"\'{current_value2[key]}\'"}'
-                                    )
-                                current_value2.pop(key)
+                                    f"{pre_key}.{key[2:]}' was added "
+                                    "with value: [complex value]")
                             else:
                                 lines.append(
-                                    f"{pre_key}.{key}' was updated. From "
-                                    f'{current_value[key] 
-                                       if isinstance(current_value[key], int) 
-                                       else f"\'{current_value[key]}\'"}'
-                                    f" to [complex value]"
-                                    )
-                                current_value2.pop(key)
-                        else:
-                            current_value2.pop(key)
-                    else:
-                        lines.append(f"{pre_key}.{key}' was removed")
+                                    f"{pre_key}.{key[2:]}' was added "
+                                    f"with value: {iter_(val)}")
                 else:
-                    if current_value2.get(key, 'not_key') != 'not_key':
-                        if current_value[key] != current_value2[key]:
+                    if key[0] == '-':
+                        if is_key(current_value, '+' + key[1:]):
                             lines.append(
-                                f"Property '{key}' was updated. From "
-                                f'{current_value[key] 
-                                    if isinstance(current_value[key], int) 
-                                    else f"\'{current_value[key]}\'"} to '
-                                f'{current_value2[key]
-                                    if isinstance(current_value2[key], int) 
-                                    else f"\'{current_value2[key]}\'"}'
-                                )
-                            current_value2.pop(key)
+                                f"Property '{key[2:]}' was updated. "
+                                f"From {iter_(val)} to "
+                                f"{iter_(current_value['+' + key[1:]])}")
                         else:
-                            current_value2.pop(key) 
-                    else:
-                        lines.append(f"Property '{key}' was removed")   
+                            lines.append(f"Property '{key[2:]}' was removed")
+                    elif key[0] == '+':
+                        if not is_key(current_value, '-' + key[1:]):
+                            if isinstance(val, dict):
+                                lines.append(
+                                    f"Property '{key[2:]}' was added "
+                                    "with value: [complex value]")
+                            else:
+                                lines.append(
+                                    f"Property '{key[2:]}' was added "
+                                    f"with value: {iter_(val)}")
             else:
                 if pre_key:
-                    if current_value2.get(key):                        
-                        if not isinstance(current_value2.get(key), str):
-                            lines.append(iter(current_value[key], 
-                                              current_value2.pop(key), 
-                                              f"{pre_key}.{key}"))
+                    if key[0] == '-':
+                        if is_key(current_value, '+' + key[1:]):
+                            if isinstance(val, dict):
+                                lines.append(
+                                    f"{pre_key}.{key[2:]}' was updated. "
+                                    f"From [complex value] to "
+                                    f"{iter_(current_value['+' + key[1:]])}")
+                            else:
+                                lines.append(
+                                    f"{pre_key}.{key[2:]}' was updated. "
+                                    f"From {iter_(val)} to "
+                                    f"{iter_(current_value['+' + key[1:]])}")
                         else:
+                            lines.append(f"{pre_key}.{key[2:]}' was removed")
+                    elif key[0] == '+':
+                        if not is_key(current_value, '-' + key[1:]):
                             lines.append(
-                                f"{pre_key}.{key}' was updated. "
-                                f"From [complex value] to "
-                                f'{current_value2[key]
-                                if isinstance(current_value2[key], int) 
-                                else f"\'{current_value2[key]}\'"}'
-                                )
-                            current_value2.pop(key)
+                                f"{pre_key}.{key[2:]}' was added "
+                                f"with value: [complex value]")
                     else:
-                        lines.append(f"{pre_key}.{key}' was removed")
+                        lines.append(iter_(val, f"{pre_key}.{key[2:]}"))
                 else:
-                    if current_value2.get(key):                        
-                        if not isinstance(current_value2[key], str):
+                    if key[0] == '-':
+                        if not is_key(current_value, '+' + key[1:]):
                             lines.append(
-                                iter(current_value[key], 
-                                     current_value2.pop(key), 
-                                     f"Property '{key}")
-                                     )
-                    else:
-                        lines.append(f"Property '{key}' was removed")
-            if list(current_value)[-1] == key:
-                if len(current_value2) > 0:
-                    for key, val in current_value2.items():
-                        if not isinstance(val, dict):
-                            if pre_key:
-                                lines.append(
-                                    f"{pre_key}.{key}' was added "
-                                    f"with value: "
-                                    f'{current_value2[key]
-                                    if isinstance(current_value2[key], int) 
-                                    else f"\'{current_value2[key]}\'"}'
-                                    )
-                            else:
-                                lines.append(
-                                    f"Property '{key}' was added "
-                                    f"with value: "
-                                    f'{current_value2[key]
-                                    if isinstance(current_value2[key], int) 
-                                    else f"\'{current_value2[key]}\'"}'
-                                    )
-                        else:
-                            if pre_key:
-                                lines.append(
-                                    f"{pre_key}.{key}' was added "
-                                    "with value: [complex value]"
-                                    )
-                            else:
-                                lines.append(
-                                    f"Property '{key}' was added "
-                                    "with value: [complex value]"
-                                    )
-                lines = sorted(lines, key=lambda item: item.split()[1])
-        result = itertools.chain(lines)
+                                f"Property '{key[2:]}' was removed")
+                    elif key[0] == '+':
+                        if not is_key(current_value, '-' + key[1:]):
+                            lines.append(
+                                f"Property '{key[2:]}' was added "
+                                "with value: [complex value]")
+                    else: 
+                        lines.append(iter_(val, f"Property '{key[2:]}"))
+            lines = sorted(lines, key=lambda item: item.split()[1])
+        result = itertools.chain(lines)    
         return '\n'.join(result)
-    return iter(data, copy_file2, '')
+
+    return iter_(value, '').replace('"', "'")
