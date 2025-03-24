@@ -17,14 +17,21 @@ def plain(value):  # noqa: C901
 
         lines = []
         for key, val in current_value.items():
-            if not isinstance(val, dict):                              
+            if not isinstance(val, dict):
                 if pre_key:
                     if key[0] == '-':
                         if is_key(current_value, '+' + key[1:]):
-                            lines.append(
-                                f"{pre_key}.{key[2:]}' was updated. "
-                                f"From {iter_(val)} to "
-                                f"{iter_(current_value['+' + key[1:]])}")
+                            if not isinstance(
+                                (current_value['+' + key[1:]]), dict):
+                                lines.append(
+                                    f"{pre_key}.{key[2:]}' was updated. "
+                                    f"From {iter_(val)} to "
+                                    f"{iter_(current_value['+' + key[1:]])}")
+                            else:
+                                lines.append(
+                                    f"{pre_key}.{key[2:]}' was updated. "
+                                    f"From {iter_(val)} to "
+                                    "[complex value]")
                         else:
                             lines.append(f"{pre_key}.{key[2:]}' was removed")
                     elif key[0] == '+':
@@ -60,16 +67,15 @@ def plain(value):  # noqa: C901
                 if pre_key:
                     if key[0] == '-':
                         if is_key(current_value, '+' + key[1:]):
-                            if isinstance(val, dict):
+                            if not isinstance(
+                                (current_value['+' + key[1:]]), dict):
                                 lines.append(
                                     f"{pre_key}.{key[2:]}' was updated. "
                                     f"From [complex value] to "
                                     f"{iter_(current_value['+' + key[1:]])}")
                             else:
                                 lines.append(
-                                    f"{pre_key}.{key[2:]}' was updated. "
-                                    f"From {iter_(val)} to "
-                                    f"{iter_(current_value['+' + key[1:]])}")
+                                    iter_(val, f"{pre_key}.{key[2:]}"))
                         else:
                             lines.append(f"{pre_key}.{key[2:]}' was removed")
                     elif key[0] == '+':
