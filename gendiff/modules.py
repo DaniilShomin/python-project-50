@@ -23,68 +23,78 @@ def generate_diff(filepath1, filepath2, format_name='stylish'):
 
 def open_json_yaml(filepath):
     if filepath.endswith('.json'):
-        with open(filepath) as file:        
+        with open(filepath) as file:
             return json.load(file)
     elif filepath.endswith('.yaml') or filepath.endswith('.yml'):
         with open(filepath) as file: 
             return yaml.load(file, Loader=SafeLoader)
-        
-        
-def pref():
-    return ['  ', '- ', '+ ']       
-   
+
 
 def get_generated_diff(data, data2):  # noqa: C901
-    copy_file2 = copy.deepcopy(data2)
-    prefix = pref()
 
-    def iter(current_value, current_value2):  # noqa: C901
+    copy_file2 = copy.deepcopy(data2)
+    action = ['added', 'removed', 'changed', 'saved']
+
+    def iter(current_value, current_value2={}):  # noqa: C901
         if not isinstance(current_value, dict):
             return current_value
                 
-        gen_diff = {}
+        gen_diff = []
 
         if not current_value2:
             for key, val in current_value.items():
-                gen_diff[f'{prefix[0]}{key}'] = iter(current_value[key], {})
+                gen_diff.append({
+                    "key": key, 
+                    "type": action[3], 
+                    "value": iter(val)})
 
         else:
-            for key, val in current_value.items():            
+            for key, val in current_value.items():
                 if not isinstance(val, dict):
                     if current_value2.get(key, 'not_key') != 'not_key':
                         if current_value[key] == current_value2[key]:
-                            gen_diff[f'{prefix[0]}{key}'] \
-                                = iter(current_value2.pop(key), {})
+                            gen_diff.append({
+                                "key": key, 
+                                "type": action[3], 
+                                "value": iter(current_value2.pop(key))}) 
                         else:
-                            if not isinstance(current_value2[key], dict):
-                                gen_diff[f'{prefix[1]}{key}'] \
-                                    = iter(current_value[key], {})
-                                gen_diff[f'{prefix[2]}{key}'] \
-                                    = iter(current_value2.pop(key), {})
-                            else:
-                                gen_diff[f'{prefix[1]}{key}'] \
-                                    = iter(current_value[key], {})
-                                gen_diff[f'{prefix[2]}{key}'] \
-                                    = iter(current_value2.pop(key), {})
+                            gen_diff.append({
+                                "key": key, 
+                                "type": action[2], 
+                                "value": [iter(current_value[key]), 
+                                          iter(current_value2.pop(key))]})
                     else:
-                        gen_diff[f'{prefix[1]}{key}'] \
-                            = iter(current_value[key], {})
+                        gen_diff.append({
+                            "key": key, 
+                            "type": action[1], 
+                            "value": iter(current_value[key])})
                 else:
                     if (current_value2.get(key, 'not_key') != 'not_key' and
                         not isinstance(current_value2.get(key), str)):
-                        gen_diff[f'{prefix[0]}{key}'] \
-                            = iter(current_value[key], current_value2.pop(key))
+                        gen_diff.append({
+                            "key": key, 
+                            "type": action[3], 
+                            "value": iter(current_value[key], 
+                                          current_value2.pop(key))})
                     elif (current_value2.get(key, 'not_key') != 'not_key' and
                           isinstance(current_value2.get(key), str)):
-                        gen_diff[f'{prefix[1]}{key}'] \
-                            = iter(current_value[key], {})
+                        gen_diff.append({
+                            "key": key, 
+                            "type": action[2], 
+                            "value": [iter(current_value[key]), 
+                                      iter(current_value2.pop(key))]})
                     else:
-                        gen_diff[f'{prefix[1]}{key}'] \
-                            = iter(current_value[key], {})
+                        gen_diff.append({
+                            "key": key, 
+                            "type": action[1], 
+                            "value": iter(current_value[key])})
                 if list(current_value)[-1] == key:
                     if len(current_value2) > 0:
                         for key in current_value2.keys():
-                            gen_diff[f'{prefix[2]}{key}'] \
-                                = iter(current_value2[key], {})
+                            gen_diff.append({
+                                "key": key, 
+                                "type": action[0], 
+                                "value": iter(current_value2[key])})
+
         return gen_diff
     return iter(data, copy_file2)
