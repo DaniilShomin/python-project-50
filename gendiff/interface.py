@@ -3,8 +3,8 @@ from gendiff.constants import DICTIONARY
 
 def corect_output(value):
     if not is_nested(value):        
-        if DICTIONARY.get(value):
-            return DICTIONARY[value]
+        if DICTIONARY.get(f'{value}'):
+            return DICTIONARY[f'{value}']
         elif isinstance(value, str):
             return f"'{value}'"
         elif isinstance(value, int):

@@ -1,5 +1,5 @@
 DICTIONARY = {
-    True: 'true',
-    False: 'false',
-    None: 'null',
+    'True': 'true',
+    'False': 'false',
+    'None': 'null',
 }
